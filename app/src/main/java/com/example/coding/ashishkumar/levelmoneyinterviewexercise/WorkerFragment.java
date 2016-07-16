@@ -9,9 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-import com.example.coding.ashishkumar.levelmoneyinterviewexercise.model.CommonArgs;
-import com.example.coding.ashishkumar.levelmoneyinterviewexercise.model.GetAllTransactionsRequest;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -154,16 +151,6 @@ public class WorkerFragment extends Fragment {
             }
         }
 
-        private GetAllTransactionsRequest makeRequestObject() {
-            GetAllTransactionsRequest request = new GetAllTransactionsRequest();
-            CommonArgs args = new CommonArgs(APICallsConstants.USER_ID,
-                                    APICallsConstants.AUTH_TOKEN,
-                                    APICallsConstants.API_TOKEN,true,true);
-
-            request.setArgs(args);
-            return request;
-
-        }
     }
 
 

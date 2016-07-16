@@ -59,11 +59,8 @@ public class UserAllTransactionsActivity extends AppCompatActivity implements Wo
             mProgressDialog = null;
         }
 
-//        GetAllTransactionResponse responseObj = (GetAllTransactionResponse) Utilities.parseResponse(
-//                response, GetAllTransactionResponse.class.getSimpleName());
-
-
-        Utilities.parseResponse(response,)
+        GetAllTransactionResponse responseObj = (GetAllTransactionResponse) Utilities.parseResponse(
+                response, GetAllTransactionResponse.class.getSimpleName());
 
         transactionToBeShown = Utilities.getTransactionsToBeShown(responseObj);
 

@@ -3,7 +3,6 @@ package com.example.coding.ashishkumar.levelmoneyinterviewexercise.utilities;
 import com.example.coding.ashishkumar.levelmoneyinterviewexercise.model.GetAllTransactionResponse;
 import com.example.coding.ashishkumar.levelmoneyinterviewexercise.model.Transaction;
 import com.example.coding.ashishkumar.levelmoneyinterviewexercise.model.TransactionToBeShown;
-import com.example.coding.ashishkumar.levelmoneyinterviewexercise.model.WebResposneInterface;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ import java.util.Map;
  * Created by ashishkumar on 7/16/16.
  */
 public class Utilities {
-    public static Object parseResponse(String response, WebResposneInterface interface) {
+    public static Object parseResponse(String response,String className) {
 
         // create new class JsonParser.
         Gson gson = new Gson();
@@ -28,10 +27,6 @@ public class Utilities {
         }
 
         return null;
-    }
-
-    public static void formatData(GetAllTransactionResponse responseObj) {
-
     }
 
     public static ArrayList<TransactionToBeShown> getTransactionsToBeShown(GetAllTransactionResponse responseObj) {
@@ -70,7 +65,7 @@ public class Utilities {
                     income += transaction.getAmount();
                 }
                 else {
-                    spending += Math.abs(transaction.getAmount())
+                    spending += Math.abs(transaction.getAmount());
                 }
             }
 
