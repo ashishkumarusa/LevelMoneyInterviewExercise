@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">LevelMoneyInterviewExercise</string>
+    <string name="load_all_transactions_string">Load All Transactions</string>
+</resources>
