@@ -3,7 +3,7 @@ package com.example.coding.ashishkumar.levelmoneyinterviewexercise.model;
 /**
  * Created by ashishkumar on 7/15/16.
  */
-public class GetAllTransactionResponse {
+public class GetAllTransactionResponse implements WebResposneInterface {
     private String error;
     private Transaction[] transactions;
 
