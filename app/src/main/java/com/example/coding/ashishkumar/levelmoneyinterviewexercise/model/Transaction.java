@@ -89,19 +89,19 @@ public class Transaction {
     }
 
     public String getTransactionTime() {
-
+        Log.v("Ashish","getTransactionTime()");
        return format(transactionTime);
 
     }
 
     public void setTransactionTime(String transactionTime) {
-        Log.v("Ashish","setTransactionTime()");
-        format(transactionTime);
+       // Log.v("Ashish","setTransactionTime()");
+       // format(transactionTime);
         this.transactionTime = transactionTime;
     }
 
     private String format(String transactionTime) {
-        String[] entries = transactionTime.split("-",2);
+        String[] entries = transactionTime.split("-");
         year = Integer.parseInt(entries[0]);
         month = Integer.parseInt(entries[1]);
         printedYearMonth = new StringBuilder().append(year).append("-").append(month).toString();

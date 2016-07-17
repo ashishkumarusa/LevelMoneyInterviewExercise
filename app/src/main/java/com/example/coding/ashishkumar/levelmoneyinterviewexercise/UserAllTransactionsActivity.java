@@ -70,7 +70,6 @@ public class UserAllTransactionsActivity extends AppCompatActivity implements Wo
 
     private void print(HashMap<String,TransactionToBeShown> transactionsToBeShown) {
         for (String key : transactionsToBeShown.keySet()) {
-           Log.v("Ashish","Iterating or looping map using java5 foreach loop");
            Log.v("Ashish","key: " + key + " income: " + transactionsToBeShown.get(key).getIncome());
             Log.v("Ashish","key: " + key + " spendings: " + transactionsToBeShown.get(key).getSpent());
         }

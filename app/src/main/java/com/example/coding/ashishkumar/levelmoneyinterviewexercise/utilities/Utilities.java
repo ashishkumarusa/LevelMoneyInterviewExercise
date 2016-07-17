@@ -40,7 +40,7 @@ public class Utilities {
 
         while (listIterator.hasNext()) {
             Transaction transaction = listIterator.next();
-            String key = transaction.getPrintedYearMonth();
+            String key = transaction.getTransactionTime();
             if (map.get(key) == null) {
                 map.put(key,new ArrayList<Transaction>());
             }
@@ -82,6 +82,25 @@ public class Utilities {
 
         return hasmap;
     }
+    private Map test(){
+        List<Transaction> allTransactionsList = new ArrayList<>();
+        Map<String, TransactionToBeShown> transactionToBeShownMap  = new HashMap();
+
+        for(Transaction transaction :allTransactionsList){
+            TransactionToBeShown transactionToBeShown;
+            if(transactionToBeShownMap.containsKey(transaction.getTransactionTime())){
+                transactionToBeShown = transactionToBeShownMap.get(transaction.getTransactionTime());
+            } else {
+                transactionToBeShown = new TransactionToBeShown(0,0);
+            }
+            transactionToBeShown = transactionToBeShownMap.get(transaction.getTransactionTime());
+            if(transaction.getAmount() > 0) transactionToBeShown.getIncome()+=transaction.getAmount();
+            else transactionToBeShown.getSpent()+=transaction.getAmount();
+            transactionToBeShownMap.put(transaction.getTransactionTime(),transactionToBeShown);
+        }
+        return transactionToBeShownMap;
+    }
+
 
 
 }
