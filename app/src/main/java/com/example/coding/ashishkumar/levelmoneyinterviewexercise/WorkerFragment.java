@@ -136,7 +136,7 @@ public class WorkerFragment extends Fragment {
                 inner.put("token",APICallsConstants.AUTH_TOKEN);
                 inner.put("api-token",APICallsConstants.API_TOKEN);
                 inner.put("json-strict-mode",true);
-                inner.put("json-verbose-response",true);
+                inner.put("json-verbose-response",false);
 
                 outer.put("args",inner);
 

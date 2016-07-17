@@ -70,7 +70,7 @@ public class HttpClientUtility {
                 httpConn.getOutputStream());
         writer.write(jsonObject.toString());
 
-        Log.v("Ashish jsonObject==",jsonObject.toString());
+      // Log.v("Ashish jsonObject==",jsonObject.toString());
         writer.flush();
         writer.close();
 

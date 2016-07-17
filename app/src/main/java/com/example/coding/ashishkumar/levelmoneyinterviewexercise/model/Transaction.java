@@ -1,5 +1,7 @@
 package com.example.coding.ashishkumar.levelmoneyinterviewexercise.model;
 
+import android.util.Log;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -88,19 +90,22 @@ public class Transaction {
 
     public String getTransactionTime() {
 
-        return transactionTime;
+       return format(transactionTime);
+
     }
 
     public void setTransactionTime(String transactionTime) {
+        Log.v("Ashish","setTransactionTime()");
         format(transactionTime);
         this.transactionTime = transactionTime;
     }
 
-    private void format(String transactionTime) {
+    private String format(String transactionTime) {
         String[] entries = transactionTime.split("-",2);
         year = Integer.parseInt(entries[0]);
         month = Integer.parseInt(entries[1]);
         printedYearMonth = new StringBuilder().append(year).append("-").append(month).toString();
+        return printedYearMonth;
 
     }
 

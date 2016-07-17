@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
@@ -29,9 +30,9 @@ public class Utilities {
         return null;
     }
 
-    public static ArrayList<TransactionToBeShown> getTransactionsToBeShown(GetAllTransactionResponse responseObj) {
+    public static HashMap<String,TransactionToBeShown> getTransactionsToBeShown(GetAllTransactionResponse responseObj) {
 
-        ArrayList<Transaction> transactionArrayList = (ArrayList<Transaction>) Arrays.asList(responseObj.getTransactions());
+      List<Transaction> transactionArrayList = Arrays.asList(responseObj.getTransactions());
 
         ListIterator<Transaction> listIterator = transactionArrayList.listIterator();
 
@@ -47,16 +48,19 @@ public class Utilities {
 
         }
 
-        createAndReturnTranscToBeShown(map);
-       return null;
+        return  createAndReturnTranscToBeShown(map);
     }
 
-    private static void createAndReturnTranscToBeShown(HashMap<String, ArrayList<Transaction>> map) {
+    private static HashMap<String,TransactionToBeShown> createAndReturnTranscToBeShown(HashMap<String, ArrayList<Transaction>> map) {
+        HashMap<String,TransactionToBeShown> hasmap = new HashMap<>();
+
         for (Map.Entry<String, ArrayList<Transaction>> entry : map.entrySet()) {
+
             System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
             String key = entry.getKey();
             ArrayList<Transaction> transactions = entry.getValue();
             long spending =0,income = 0;
+            TransactionToBeShown transactionToBeShown = new TransactionToBeShown();
 
             ListIterator<Transaction> listIterator =transactions.listIterator();
             while (listIterator.hasNext()) {
@@ -69,8 +73,15 @@ public class Utilities {
                 }
             }
 
+            transactionToBeShown.setIncome(income);
+            transactionToBeShown.setSpent(spending);
+            if (hasmap.get(key)== null) {
+                hasmap.put(key,transactionToBeShown);
+            }
         }
 
+        return hasmap;
     }
+
 
 }

@@ -11,7 +11,7 @@ import com.example.coding.ashishkumar.levelmoneyinterviewexercise.model.GetAllTr
 import com.example.coding.ashishkumar.levelmoneyinterviewexercise.model.TransactionToBeShown;
 import com.example.coding.ashishkumar.levelmoneyinterviewexercise.utilities.Utilities;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class UserAllTransactionsActivity extends AppCompatActivity implements WorkerFragment.TaskCallbacks {
 
@@ -20,7 +20,7 @@ public class UserAllTransactionsActivity extends AppCompatActivity implements Wo
 
     private ListView mListView = null;
     private ProgressDialog mProgressDialog = null;
-    private ArrayList<TransactionToBeShown> transactionToBeShown = new ArrayList<>();
+    private HashMap<String,TransactionToBeShown> transactionsMapToBeShown = new HashMap<>();
 
 
     @Override
@@ -62,7 +62,18 @@ public class UserAllTransactionsActivity extends AppCompatActivity implements Wo
         GetAllTransactionResponse responseObj = (GetAllTransactionResponse) Utilities.parseResponse(
                 response, GetAllTransactionResponse.class.getSimpleName());
 
-        transactionToBeShown = Utilities.getTransactionsToBeShown(responseObj);
+        transactionsMapToBeShown = Utilities.getTransactionsToBeShown(responseObj);
+        print(transactionsMapToBeShown);
+
+
+    }
+
+    private void print(HashMap<String,TransactionToBeShown> transactionsToBeShown) {
+        for (String key : transactionsToBeShown.keySet()) {
+           Log.v("Ashish","Iterating or looping map using java5 foreach loop");
+           Log.v("Ashish","key: " + key + " income: " + transactionsToBeShown.get(key).getIncome());
+            Log.v("Ashish","key: " + key + " spendings: " + transactionsToBeShown.get(key).getSpent());
+        }
 
     }
 
