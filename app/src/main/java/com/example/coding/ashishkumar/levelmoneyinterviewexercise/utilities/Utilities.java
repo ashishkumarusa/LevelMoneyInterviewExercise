@@ -19,9 +19,9 @@ public class Utilities {
         return gson.fromJson(response, responseClass);
     }
 
-    public static Map<String, DisplayTransaction> getTransactionsToDisplay(GetAllTransactionResponse responseObj, boolean ignoreDonuts) {
-        List<Transaction> allTransactionsList;
+    public static Map<String, DisplayTransaction> getTransactionsToDisplay(GetAllTransactionResponse responseObj,boolean ignoreDonuts) {
 
+        List<Transaction> allTransactionsList;
 
         if (responseObj != null && responseObj.getTransactions() != null && responseObj.getTransactions().length > 0) {
             allTransactionsList = Arrays.asList(responseObj.getTransactions());
