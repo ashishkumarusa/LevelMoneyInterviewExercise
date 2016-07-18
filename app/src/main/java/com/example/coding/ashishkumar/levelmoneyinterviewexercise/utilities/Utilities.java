@@ -68,7 +68,7 @@ public class Utilities {
     }
 
     private static boolean isDonutsSpending(Transaction transaction) {
-        // I am assuming if merchant fields contains either DONUTS OR DUNKIN it will be a donut spending.
-        return transaction != null && (transaction.getMerchant().toUpperCase().contains("DONUTS") || transaction.getMerchant().toUpperCase().contains("DUNKIN"));
+        return transaction != null && (transaction.getMerchant().equalsIgnoreCase("Krispy Kreme Donuts")
+                || transaction.getMerchant().equalsIgnoreCase("DUNKIN #336784"));
     }
 }
