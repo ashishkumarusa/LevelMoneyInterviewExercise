@@ -1,7 +1,5 @@
 package com.example.coding.ashishkumar.levelmoneyinterviewexercise.model;
 
-import android.util.Log;
-
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -9,18 +7,18 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Transaction {
     @SerializedName("transaction-id")
-    private String transactionId ;
+    private String transactionId;
 
     @SerializedName("account-id")
-    private String accountId ;
+    private String accountId;
 
     @SerializedName("raw-merchant")
-    private String rawMerchant ;
+    private String rawMerchant;
 
     private String merchant;
 
     @SerializedName("is-pending")
-    private boolean isPending ;
+    private boolean isPending;
 
     @SerializedName("transaction-time")
     private String transactionTime;
@@ -28,19 +26,19 @@ public class Transaction {
     private long amount;
 
     @SerializedName("previous-transaction-id")
-    private String prevTransId ;
+    private String prevTransId;
 
-    private String categorization ;
+    private String categorization;
 
 
     @SerializedName("memo-only-for-testing")
-    private String memo ;
+    private String memo;
 
     @SerializedName("payee-name-only-for-testing")
-    private String payeeName ;
+    private String payeeName;
 
     @SerializedName("clear-date")
-    private String clearDate ;
+    private String clearDate;
 
     private int year;
 
@@ -52,59 +50,32 @@ public class Transaction {
         return transactionId;
     }
 
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
-    }
-
     public String getAccountId() {
         return accountId;
-    }
-
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
     }
 
     public String getRawMerchant() {
         return rawMerchant;
     }
 
-    public void setRawMerchant(String rawMerchant) {
-        this.rawMerchant = rawMerchant;
-    }
-
     public String getMerchant() {
         return merchant;
-    }
-
-    public void setMerchant(String merchant) {
-        this.merchant = merchant;
     }
 
     public boolean isPending() {
         return isPending;
     }
 
-    public void setPending(boolean pending) {
-        isPending = pending;
-    }
-
     public String getTransactionTime() {
-        Log.v("Ashish","getTransactionTime()");
-       return format(transactionTime);
 
-    }
-
-    public void setTransactionTime(String transactionTime) {
-       // Log.v("Ashish","setTransactionTime()");
-       // format(transactionTime);
-        this.transactionTime = transactionTime;
+        return format(transactionTime);
     }
 
     private String format(String transactionTime) {
         String[] entries = transactionTime.split("-");
         year = Integer.parseInt(entries[0]);
         month = Integer.parseInt(entries[1]);
-        printedYearMonth = new StringBuilder().append(year).append("-").append(month).toString();
+        printedYearMonth = String.valueOf(year) + "-" + month;
         return printedYearMonth;
 
     }
@@ -113,48 +84,24 @@ public class Transaction {
         return amount;
     }
 
-    public void setAmount(long amount) {
-        this.amount = amount;
-    }
-
     public String getPrevTransId() {
         return prevTransId;
-    }
-
-    public void setPrevTransId(String prevTransId) {
-        this.prevTransId = prevTransId;
     }
 
     public String getCategorization() {
         return categorization;
     }
 
-    public void setCategorization(String categorization) {
-        this.categorization = categorization;
-    }
-
     public String getMemo() {
         return memo;
-    }
-
-    public void setMemo(String memo) {
-        this.memo = memo;
     }
 
     public String getPayeeName() {
         return payeeName;
     }
 
-    public void setPayeeName(String payeeName) {
-        this.payeeName = payeeName;
-    }
-
     public String getClearDate() {
         return clearDate;
-    }
-
-    public void setClearDate(String clearDate) {
-        this.clearDate = clearDate;
     }
 
     public int getYear() {

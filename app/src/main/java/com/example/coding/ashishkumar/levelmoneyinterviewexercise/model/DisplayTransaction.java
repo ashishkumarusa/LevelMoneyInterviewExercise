@@ -3,16 +3,13 @@ package com.example.coding.ashishkumar.levelmoneyinterviewexercise.model;
 /**
  * Created by ashishkumar on 7/16/16.
  */
-public class TransactionToBeShown {
+public class DisplayTransaction {
     private long spent;
     private long income;
 
-    public TransactionToBeShown(long spent, long income) {
+    public DisplayTransaction(long spent, long income) {
         this.spent = spent;
         this.income = income;
-    }
-
-    public TransactionToBeShown() {
     }
 
     public long getSpent() {

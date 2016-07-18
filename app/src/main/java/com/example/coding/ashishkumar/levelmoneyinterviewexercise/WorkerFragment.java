@@ -26,12 +26,13 @@ public class WorkerFragment extends Fragment {
      */
     interface TaskCallbacks {
         void onPreExecute();
+
         void onCancelled();
+
         void onPostExecute(String response);
     }
 
     private TaskCallbacks mCallbacks;
-    private DataFetchingTask mTask;
 
     public WorkerFragment() {
     }
@@ -55,14 +56,11 @@ public class WorkerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Bundle bundle = getArguments();
-
         // Retain this fragment across configuration changes.
         setRetainInstance(true);
 
         // Create and execute the background task.
-        mTask = new DataFetchingTask();
+        DataFetchingTask mTask = new DataFetchingTask();
         mTask.execute();
     }
 
@@ -79,7 +77,7 @@ public class WorkerFragment extends Fragment {
     /**
      * A data fetching task that performs background work and
      * proxies progress updates and results back to the Activity.
-     *
+     * <p/>
      * Note that we need to check if the callbacks are null in each
      * method in case they are invoked after the Activity's and
      * Fragment's onDestroy() method have been called.
@@ -100,12 +98,12 @@ public class WorkerFragment extends Fragment {
          */
         @Override
         protected String doInBackground(String... ignore) {
-            makePostRequest();
-          return parseResponse();
+            callAPIEndpoint();
+            return parseResponse();
         }
 
         private String parseResponse() {
-            String response= "";
+            String response = "";
             try {
                 response = HttpClientUtility.readSingleLineRespone();
             } catch (IOException e) {
@@ -128,20 +126,20 @@ public class WorkerFragment extends Fragment {
             }
         }
 
-        private void makePostRequest() {
+        private void callAPIEndpoint() {
             JSONObject inner = new JSONObject();
             JSONObject outer = new JSONObject();
             try {
-                inner.put("uid",APICallsConstants.USER_ID);
-                inner.put("token",APICallsConstants.AUTH_TOKEN);
-                inner.put("api-token",APICallsConstants.API_TOKEN);
-                inner.put("json-strict-mode",true);
-                inner.put("json-verbose-response",false);
+                inner.put("uid", APICallsConstants.USER_ID);
+                inner.put("token", APICallsConstants.AUTH_TOKEN);
+                inner.put("api-token", APICallsConstants.API_TOKEN);
+                inner.put("json-strict-mode", true);
+                inner.put("json-verbose-response", false);
 
-                outer.put("args",inner);
+                outer.put("args", inner);
 
                 try {
-                    HttpClientUtility.makePostRequest(APICallsConstants.GET_ALL_TRANSACTIONS_API_URL,outer);
+                    HttpClientUtility.makePostRequest(APICallsConstants.GET_ALL_TRANSACTIONS_API_URL, outer);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -150,7 +148,6 @@ public class WorkerFragment extends Fragment {
                 e.printStackTrace();
             }
         }
-
     }
 
 

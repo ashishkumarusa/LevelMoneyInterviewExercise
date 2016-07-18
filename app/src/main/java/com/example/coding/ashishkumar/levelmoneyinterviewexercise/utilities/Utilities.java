@@ -2,105 +2,57 @@ package com.example.coding.ashishkumar.levelmoneyinterviewexercise.utilities;
 
 import com.example.coding.ashishkumar.levelmoneyinterviewexercise.model.GetAllTransactionResponse;
 import com.example.coding.ashishkumar.levelmoneyinterviewexercise.model.Transaction;
-import com.example.coding.ashishkumar.levelmoneyinterviewexercise.model.TransactionToBeShown;
+import com.example.coding.ashishkumar.levelmoneyinterviewexercise.model.DisplayTransaction;
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 /**
  * Created by ashishkumar on 7/16/16.
  */
 public class Utilities {
-    public static Object parseResponse(String response,String className) {
-
-        // create new class JsonParser.
+    public static Object parseResponse(String response,Class responseClass) {
         Gson gson = new Gson();
-        switch (className) {
-            case "GetAllTransactionResponse":
-                return gson.fromJson(response, GetAllTransactionResponse.class);
-            default:
-                break;
-        }
-
-        return null;
+        return gson.fromJson(response, responseClass);
     }
 
-    public static HashMap<String,TransactionToBeShown> getTransactionsToBeShown(GetAllTransactionResponse responseObj) {
+    public static Map<String,DisplayTransaction> getTransactionsToDisplay(GetAllTransactionResponse responseObj, boolean ignoreDonuts) {
+        List<Transaction> allTransactionsList;
+        allTransactionsList = Arrays.asList(responseObj.getTransactions());
 
-      List<Transaction> transactionArrayList = Arrays.asList(responseObj.getTransactions());
+        Map<String, DisplayTransaction> displayTransactionsMap = new HashMap<>();
 
-        ListIterator<Transaction> listIterator = transactionArrayList.listIterator();
-
-        HashMap<String,ArrayList<Transaction>> map = new HashMap<>();
-
-        while (listIterator.hasNext()) {
-            Transaction transaction = listIterator.next();
-            String key = transaction.getTransactionTime();
-            if (map.get(key) == null) {
-                map.put(key,new ArrayList<Transaction>());
-            }
-            map.get(key).add(transaction);
-
-        }
-
-        return  createAndReturnTranscToBeShown(map);
-    }
-
-    private static HashMap<String,TransactionToBeShown> createAndReturnTranscToBeShown(HashMap<String, ArrayList<Transaction>> map) {
-        HashMap<String,TransactionToBeShown> hasmap = new HashMap<>();
-
-        for (Map.Entry<String, ArrayList<Transaction>> entry : map.entrySet()) {
-
-            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-            String key = entry.getKey();
-            ArrayList<Transaction> transactions = entry.getValue();
-            long spending =0,income = 0;
-            TransactionToBeShown transactionToBeShown = new TransactionToBeShown();
-
-            ListIterator<Transaction> listIterator =transactions.listIterator();
-            while (listIterator.hasNext()) {
-                Transaction transaction = listIterator.next();
-                if (transaction.getAmount() >= 0) {
-                    income += transaction.getAmount();
-                }
-                else {
-                    spending += Math.abs(transaction.getAmount());
-                }
-            }
-
-            transactionToBeShown.setIncome(income);
-            transactionToBeShown.setSpent(spending);
-            if (hasmap.get(key)== null) {
-                hasmap.put(key,transactionToBeShown);
-            }
-        }
-
-        return hasmap;
-    }
-    private Map test(){
-        List<Transaction> allTransactionsList = new ArrayList<>();
-        Map<String, TransactionToBeShown> transactionToBeShownMap  = new HashMap();
-
-        for(Transaction transaction :allTransactionsList){
-            TransactionToBeShown transactionToBeShown;
-            if(transactionToBeShownMap.containsKey(transaction.getTransactionTime())){
-                transactionToBeShown = transactionToBeShownMap.get(transaction.getTransactionTime());
+        for (Transaction transaction : allTransactionsList) {
+            DisplayTransaction displayTransaction;
+            if (displayTransactionsMap.containsKey(transaction.getTransactionTime())) {
+                displayTransaction = displayTransactionsMap.get(transaction.getTransactionTime());
             } else {
-                transactionToBeShown = new TransactionToBeShown(0,0);
+                displayTransaction = new DisplayTransaction(0, 0);
             }
-            transactionToBeShown = transactionToBeShownMap.get(transaction.getTransactionTime());
-            if(transaction.getAmount() > 0) transactionToBeShown.getIncome()+=transaction.getAmount();
-            else transactionToBeShown.getSpent()+=transaction.getAmount();
-            transactionToBeShownMap.put(transaction.getTransactionTime(),transactionToBeShown);
+            if (transaction.getAmount() > 0) {
+                long income = displayTransaction.getIncome();
+                long amount = transaction.getAmount();
+                displayTransaction.setIncome(income + amount);
+
+            } else {
+                long spent = displayTransaction.getSpent();
+                long amount = transaction.getAmount();
+                if (!(isDonutsSpending(transaction) && ignoreDonuts)) {
+                    displayTransaction.setSpent(spent + Math.abs(amount));
+                }
+            }
+
+            displayTransactionsMap.put(transaction.getTransactionTime(), displayTransaction);
         }
-        return transactionToBeShownMap;
+        return displayTransactionsMap;
     }
 
-
-
+    private static boolean isDonutsSpending(Transaction transaction) {
+        // I am assuming if merchant fields contains either DONUTS OR DUNKIN it will be a donut spending.
+        return transaction.getMerchant().toUpperCase().contains("DONUTS")
+                || transaction.getMerchant().toUpperCase().contains("DUNKIN");
+    }
 }
