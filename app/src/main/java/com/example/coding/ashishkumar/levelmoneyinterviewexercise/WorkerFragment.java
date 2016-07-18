@@ -51,14 +51,6 @@ public class WorkerFragment extends Fragment {
         mCallbacks = null;
     }
 
-    /**
-     * A data fetching task that performs background work and
-     * proxies progress updates and results back to the Activity.
-     * <p/>
-     * Note that we need to check if the callbacks are null in each
-     * method in case they are invoked after the Activity's and
-     * Fragment's onDestroy() method have been called.
-     */
     private class DataFetchingTask extends AsyncTask<String, Integer, String> {
 
         @Override
