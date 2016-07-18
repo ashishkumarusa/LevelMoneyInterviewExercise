@@ -4,46 +4,61 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.Switch;
-import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.coding.ashishkumar.levelmoneyinterviewexercise.model.GetAllTransactionResponse;
 import com.example.coding.ashishkumar.levelmoneyinterviewexercise.model.DisplayTransaction;
+import com.example.coding.ashishkumar.levelmoneyinterviewexercise.model.GetAllTransactionResponse;
 import com.example.coding.ashishkumar.levelmoneyinterviewexercise.utilities.Utilities;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 
 public class UserAllTransactionsActivity extends AppCompatActivity implements WorkerFragment.TaskCallbacks {
 
     private static final String TAG_DATA_FETCHING_TASK_FRAGMENT = "data_fetching_task_fragment";
+    private static final String TAG = "UserAllTransactionsActi";
 
-    private TextView outputTv = null;
+    private ListView mListView = null;
     private ProgressDialog mProgressDialog = null;
     String jsonResponseString;
+    boolean ignoreDonuts = false;
+    private ArrayList<String> formattedTransactionsList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_all_transactions);
-        outputTv = (TextView)findViewById(R.id.output_tv) ;
+        mListView = (ListView) findViewById(R.id.list_view);
         Switch filterSwitch = (Switch) findViewById(R.id.filter_switch);
 
         filterSwitch.setChecked(false);
         filterSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               displayTransactions(isChecked);
+                ignoreDonuts = isChecked;
+                displayTransactions();
+
             }
         });
 
-        mProgressDialog = ProgressDialog.show(this, "Loading", "", true, false, null);
+
+        if (savedInstanceState != null && savedInstanceState.getString("result") != null) {
+            mListView.setAdapter(new ArrayAdapter<>(this,
+                    android.R.layout.simple_list_item_1, formattedTransactionsList));
+            return;
+        }
+
+        mProgressDialog = ProgressDialog.show(this, "Loading", "", true, true, null);
 
         FragmentManager fm = getSupportFragmentManager();
         WorkerFragment mWorkerFragment = (WorkerFragment) fm.findFragmentByTag(TAG_DATA_FETCHING_TASK_FRAGMENT);
@@ -55,13 +70,9 @@ public class UserAllTransactionsActivity extends AppCompatActivity implements Wo
     }
 
     @Override
-    public void onPreExecute() {
-
-    }
-
-    @Override
-    public void onCancelled() {
-
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArrayList("result", formattedTransactionsList);
     }
 
     @Override
@@ -73,23 +84,43 @@ public class UserAllTransactionsActivity extends AppCompatActivity implements Wo
             mProgressDialog = null;
         }
 
-        displayTransactions(true);
-
-
+        displayTransactions();
     }
 
-    private void displayTransactions(boolean ignoreDonuts) {
-        GetAllTransactionResponse responseObj = (GetAllTransactionResponse) Utilities.parseResponse(
-                jsonResponseString,GetAllTransactionResponse.class);
+    private void displayTransactions() {
+        Object object = Utilities.parseResponse(
+                jsonResponseString, GetAllTransactionResponse.class);
+        GetAllTransactionResponse responseObj;
+        if (object instanceof GetAllTransactionResponse) {
+            responseObj = (GetAllTransactionResponse) Utilities.parseResponse(
+                    jsonResponseString, GetAllTransactionResponse.class);
+        } else {
+            Toast.makeText(this, "OOPS !class cast exception occurred.", Toast.LENGTH_LONG).show();
+            Log.e(TAG, "class cast exception occurred.");
+            return;
+        }
+        if (responseObj.getError() != null && !responseObj.getError().equalsIgnoreCase("no-error")) {
+            Toast.makeText(this, responseObj.getError(), Toast.LENGTH_LONG).show();
+            Log.i(TAG, "error ==" + responseObj.getError());
+            return;
+        }
 
-        Map<String, DisplayTransaction> transactionsToBeShownMap = Utilities.getTransactionsToDisplay(responseObj, ignoreDonuts);
-        getFormattedTransactions(transactionsToBeShownMap);
-        outputTv.setText(getFormattedTransactions(transactionsToBeShownMap));
+        Map<String, DisplayTransaction> transactionsToBeShownMap = Utilities.getTransactionsToDisplay(responseObj, this.ignoreDonuts);
+        if (transactionsToBeShownMap != null) {
+            getFormattedTransactions(transactionsToBeShownMap);
+            this.formattedTransactionsList = getFormattedTransactions(transactionsToBeShownMap);
+            mListView.setAdapter(new ArrayAdapter<>(this,
+                    android.R.layout.simple_list_item_1, formattedTransactionsList));
+
+        } else {
+            Toast.makeText(this, "OOPS ! Seems some problem in loading server data", Toast.LENGTH_LONG).show();
+            Log.i(TAG, "transactionsToBeShownMap is null");
+        }
     }
 
-    private String getFormattedTransactions(Map<String, DisplayTransaction> transactionsToBeShownMap) {
+    private ArrayList<String> getFormattedTransactions(Map<String, DisplayTransaction> transactionsToBeShownMap) {
+        ArrayList<String> transactionsList = new ArrayList<>();
 
-        JSONArray jsonArray = new JSONArray();
         for (Map.Entry<String, DisplayTransaction> entry : transactionsToBeShownMap.entrySet()) {
             JSONObject outerJson = new JSONObject();
             JSONObject innerJson = new JSONObject();
@@ -100,13 +131,20 @@ public class UserAllTransactionsActivity extends AppCompatActivity implements Wo
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            jsonArray.put(outerJson);
+            transactionsList.add(outerJson.toString());
         }
-        return jsonArray.toString();
+
+        return transactionsList;
     }
 
     private String formatCurrency(long spent, Locale currentLocale) {
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(currentLocale);
         return currencyFormatter.format(spent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (mProgressDialog != null && mProgressDialog.isShowing()) mProgressDialog.dismiss();
     }
 }

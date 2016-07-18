@@ -14,8 +14,4 @@ public class GetAllTransactionResponse {
     public Transaction[] getTransactions() {
         return transactions;
     }
-
-    public void setTransactions(Transaction[] transactions) {
-        this.transactions = transactions;
-    }
 }

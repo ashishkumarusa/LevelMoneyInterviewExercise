@@ -14,21 +14,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-/**
- * This Fragment manages a single background task and retains
- * itself across configuration changes.
- */
 public class WorkerFragment extends Fragment {
 
-    /**
-     * Callback interface through which the fragment will report the
-     * task's progress and results back to the Activity.
-     */
+
     interface TaskCallbacks {
-        void onPreExecute();
-
-        void onCancelled();
-
         void onPostExecute(String response);
     }
 
@@ -37,26 +26,18 @@ public class WorkerFragment extends Fragment {
     public WorkerFragment() {
     }
 
-    /**
-     * Hold a reference to the parent Activity so we can report the
-     * task's current progress and results. The Android framework
-     * will pass us a reference to the newly created Activity after
-     * each configuration change.
-     */
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mCallbacks = (TaskCallbacks) activity;
     }
 
-    /**
-     * This method will only be called once when the retained
-     * Fragment is first created.
-     */
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Retain this fragment across configuration changes.
+        // retain this fragment across configuration changes.
         setRetainInstance(true);
 
         // Create and execute the background task.
@@ -64,10 +45,6 @@ public class WorkerFragment extends Fragment {
         mTask.execute();
     }
 
-    /**
-     * Set the callback to null so we don't accidentally leak the
-     * Activity instance.
-     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -85,40 +62,9 @@ public class WorkerFragment extends Fragment {
     private class DataFetchingTask extends AsyncTask<String, Integer, String> {
 
         @Override
-        protected void onPreExecute() {
-            if (mCallbacks != null) {
-                mCallbacks.onPreExecute();
-            }
-        }
-
-        /**
-         * Note that we do NOT call the callback object's methods
-         * directly from the background thread, as this could result
-         * in a race condition.
-         */
-        @Override
         protected String doInBackground(String... ignore) {
-            callAPIEndpoint();
-            return parseResponse();
+            return callAPIEndpoint();
         }
-
-        private String parseResponse() {
-            String response = "";
-            try {
-                response = HttpClientUtility.readSingleLineRespone();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return response;
-        }
-
-        @Override
-        protected void onCancelled() {
-            if (mCallbacks != null) {
-                mCallbacks.onCancelled();
-            }
-        }
-
         @Override
         protected void onPostExecute(String response) {
             if (mCallbacks != null) {
@@ -126,7 +72,8 @@ public class WorkerFragment extends Fragment {
             }
         }
 
-        private void callAPIEndpoint() {
+        private String callAPIEndpoint() {
+            String response = "";
             JSONObject inner = new JSONObject();
             JSONObject outer = new JSONObject();
             try {
@@ -139,7 +86,7 @@ public class WorkerFragment extends Fragment {
                 outer.put("args", inner);
 
                 try {
-                    HttpClientUtility.makePostRequest(APICallsConstants.GET_ALL_TRANSACTIONS_API_URL, outer);
+                    response = HttpClientUtility.getTransactionsResponse(APICallsConstants.GET_ALL_TRANSACTIONS_API_URL, outer);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -147,8 +94,8 @@ public class WorkerFragment extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            return response;
         }
     }
-
 
 }

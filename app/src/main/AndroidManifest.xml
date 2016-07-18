@@ -19,7 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserAllTransactionsActivity"></activity>
+        <activity android:name=".UserAllTransactionsActivity"
+            android:configChanges="keyboard|screenSize|orientation"></activity>
     </application>
 
 </manifest>

@@ -1,7 +1,5 @@
 package com.example.coding.ashishkumar.levelmoneyinterviewexercise;
 
-import android.util.Log;
-
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -16,50 +14,57 @@ public class HttpClientUtility {
 
     private static HttpURLConnection httpConn;
 
-    public static HttpURLConnection makePostRequest(String requestURL, JSONObject jsonObject) throws IOException {
-        URL url = new URL(requestURL);
-        httpConn = (HttpURLConnection) url.openConnection();
-        httpConn.setRequestMethod("POST");
-        httpConn.setRequestProperty("Content-Type", "application/json");
-        httpConn.setRequestProperty("Accept", "application/json");
-        httpConn.setConnectTimeout(10000);
-        httpConn.setReadTimeout(10000);
-        httpConn.setUseCaches(false);
+    public static String getTransactionsResponse(String requestURL, JSONObject jsonObject) throws IOException {
+        try {
+            URL url = new URL(requestURL);
+            httpConn = (HttpURLConnection) url.openConnection();
+            httpConn.setRequestMethod("POST");
+            httpConn.setRequestProperty("Content-Type", "application/json");
+            httpConn.setRequestProperty("Accept", "application/json");
+            httpConn.setConnectTimeout(10000);
+            httpConn.setReadTimeout(10000);
+            httpConn.setUseCaches(false);
 
-        httpConn.setDoInput(true); // true indicates the server returns response
-        httpConn.setDoOutput(true); // true indicates POST request
+            httpConn.setDoInput(true); // true indicates the server returns response
+            httpConn.setDoOutput(true); // true indicates POST request
+            OutputStreamWriter writer = null;
+            try {
+                writer = new OutputStreamWriter(
+                        httpConn.getOutputStream());
+                writer.write(jsonObject.toString());
 
-        OutputStreamWriter writer = new OutputStreamWriter(
-                httpConn.getOutputStream());
-        writer.write(jsonObject.toString());
 
-        writer.flush();
-        writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (writer != null) {
+                    writer.flush();
+                    writer.close();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        return httpConn;
-    }
-
-    public static String readSingleLineRespone() throws IOException {
-        int HttpResult = httpConn.getResponseCode();
-        Log.v("Ashish responseCode==", HttpResult + "");
+        String response = "";
         InputStream inputStream;
         if (httpConn != null) {
             inputStream = httpConn.getInputStream();
         } else {
-            throw new IOException("Connection is not established.");
+            throw new IOException("connection is not successful.");
         }
-        BufferedReader reader = new BufferedReader(new InputStreamReader(
-                inputStream));
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(
+                    inputStream));
 
-        String response = reader.readLine();
-        reader.close();
+            response = reader.readLine();
+
+        } finally {
+            if (reader != null)
+                reader.close();
+        }
 
         return response;
-    }
-
-    public static void disconnect() {
-        if (httpConn != null) {
-            httpConn.disconnect();
-        }
     }
 }
